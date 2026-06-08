@@ -29,7 +29,7 @@ namespace InkDemonTimerMod
 
         void OnDestroy()
         {
-            // Clean up our text object
+            // Clean up text object
             if (timerText != null && timerText.gameObject != null)
             {
                 Destroy(timerText.gameObject);
@@ -55,7 +55,7 @@ namespace InkDemonTimerMod
                 UIHUD activeHUD = FindObjectOfType<UIHUD>();
                 if (activeHUD != null)
                 {
-                    // New HUD found, clean up old text
+                    // If new HUD found -> clean up old text
                     if (activeHUD != currentHUD)
                     {
                         if (timerText != null && timerText.gameObject != null)
@@ -66,7 +66,7 @@ namespace InkDemonTimerMod
                         currentHUD = activeHUD;
                     }
 
-                    // Create timer text on this HUD
+                    // Attach the timer text to the active HUD
                     if (timerText == null)
                     {
                         AttachToHUD(currentHUD);
@@ -79,7 +79,7 @@ namespace InkDemonTimerMod
 
         private void AttachToHUD(UIHUD hud)
         {
-            // Create text and parent it to the HUD
+            // Setup the text on the game's native HUD
             var textObject = new GameObject("InkDemonTimerText");
             textObject.transform.SetParent(hud.transform, false);
 
@@ -89,7 +89,7 @@ namespace InkDemonTimerMod
             timerText.raycastTarget = false;
             timerText.enabled = isVisible;
 
-            // Position at top center
+            // Anchor to the top
             var rect = timerText.rectTransform;
             rect.anchorMin = new Vector2(0.5f, 1f);
             rect.anchorMax = new Vector2(0.5f, 1f);
@@ -104,13 +104,13 @@ namespace InkDemonTimerMod
 
         private void UpdateTimerText()
         {
-            // Nothing to update
+            // Skip update if timer text is not initialized or invisible
             if (timerText == null || !isVisible)
             {
                 return;
             }
 
-            // Find the game's font
+            // Scan the game's memory for the custom font
             if (timerText.font == null || !timerText.font.name.Contains("CaviarDreams"))
             {
                 foreach (var font in Resources.FindObjectsOfTypeAll<TMP_FontAsset>())
@@ -137,7 +137,7 @@ namespace InkDemonTimerMod
                 return;
             }
 
-            // Time left
+            // Calculate remaining time
             float remainingSeconds = Mathf.Max(0f, demonManager.TimerLimit - demonManager.Timer);
             bool isUrgent = remainingSeconds <= 5f;
 
@@ -146,7 +146,7 @@ namespace InkDemonTimerMod
             
             timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
 
-            // Blink during final 5 seconds
+            // Handle color and blinking for the final 5 seconds
             Color targetColor = isUrgent ? urgentColor : normalColor;
             float blinkAlpha = isUrgent ? (0.5f + 0.5f * Mathf.Sin(Time.time * 8f)) : 1f;
             
